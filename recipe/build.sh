@@ -65,13 +65,17 @@ if [[ ${HOST} =~ .*darwin.* ]]; then
     export APPLICATION_EXTENSION_API_ONLY=NO
 
     EXTRA_FLAGS=""
-    if [[ $(arch) == "arm64" ]]; then
-      EXTRA_FLAGS="QMAKE_APPLE_DEVICE_ARCHS=arm64"
-    fi
 
     if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" == "1" ]]; then
       # The python2_hack does not know about _sysconfigdata_arm64_apple_darwin20_0_0, so unset the data name
       unset _CONDA_PYTHON_SYSCONFIGDATA_NAME
+
+      if [[ ${target_platform} == "osx-arm64" ]]; then
+        EXTRA_FLAGS="QMAKE_APPLE_DEVICE_ARCHS=arm64"
+      elif [[ ${target_platform} == "osx-64" ]]; then
+        # This part here is untested, but i think it would work
+        EXTRA_FLAGS="QMAKE_APPLE_DEVICE_ARCHS=x86_64"
+      fi
     fi
 
     # Set QMake prefix to $PREFIX
